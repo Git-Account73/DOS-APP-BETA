@@ -2,16 +2,16 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class Card {
+class Card_Neu {
   Color? color;
   int? number;
 
-  Card(Color? c, int n) {
+  Card_Neu(Color? c, int n) {
     color = c;
     number = n;
   }
 
-  bool aktion(DiscardStack dis, HandStack hand){
+  bool action(DiscardStack dis, HandStack hand){
     if(dis.lastCard().color != color){
       if(dis.lastCard().number != number){
         return false;
@@ -25,7 +25,7 @@ class Card {
 }
 
 abstract class CardsStack{
-  List<Card> cards = <Card>[];
+  List<Card_Neu> cards = <Card_Neu>[];
 }
 
 class DrawStack extends CardsStack {
@@ -38,17 +38,17 @@ class DrawStack extends CardsStack {
         num = 1;
         j++;
       }
-      cards.add(Card(col[j], num));
+      cards.add(Card_Neu(col[j], num));
     }
     cards.shuffle();
   }
 
-  Card? draw() {
+  Card_Neu? draw() {
     if (cards.isEmpty){
       return null;
     }
     int count = Random().nextInt(cards.length - 1);
-    Card drawnCard = cards[count];
+    Card_Neu drawnCard = cards[count];
 
     cards.remove(drawnCard);
 
@@ -61,21 +61,27 @@ class DrawStack extends CardsStack {
 }
 
 class DiscardStack extends CardsStack{
-  void play (Card card){
+  DiscardStack(DrawStack dr){
+    Card_Neu? first = dr.draw();
+    if(first != null) {
+      cards.add(first);
+    }
+  }
+  void play (Card_Neu card){
     cards.add(card);
   }
 
-  Card lastCard() {
+  Card_Neu lastCard() {
     return cards.last;
   }
 }
 
 class HandStack extends CardsStack{
-  void cardIsPlayed(Card card){
+  void cardIsPlayed(Card_Neu card){
     cards.remove(card);
   }
 
-  List<Card> seeHand(){
+  List<Card_Neu> seeHand(){
     return cards;
   }
 }
