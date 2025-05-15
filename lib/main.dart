@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:test_test/class1.dart';
 
+import 'package:test_test/constants.dart';
+
 
 
 void main() {
@@ -62,8 +64,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   HandStack hand01 = new HandStack();
-  DiscardStack discardStack = new DiscardStack();
-  DrawStack drawStack = new DrawStack();
+  static DrawStack drawStack = new DrawStack();
+  DiscardStack discardStack = new DiscardStack(drawStack);
+
 
   void _incrementCounter() {
     setState(() {
@@ -88,24 +91,21 @@ class _MyHomePageState extends State<MyHomePage> {
         child:*/ GestureDetector UI_Karte = GestureDetector(
           onTap: (){
             setState(() {
-              Data_Karte.aktion(discardStack, hand01);
+              Data_Karte.action(discardStack, hand01);
             }
             );
           },
           child: Container(
-            constraints: BoxConstraints.loose(
-                Size(100, 100)
-            ),
             margin: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              border: Border.all (
-                width: 2,
-                color: Colors.black,
+                border: Border.all (
+                  width: 2,
+                  color: Colors.black,
+                ),
+                color:  Data_Karte.color,
               ),
-              color:  Data_Karte.color,
-            ),
-            width: 100,
-            height: 100,
+            width: CARD_WIDTH,
+            height: CARD_HEIGHT,
             child: Text(Data_Karte.number.toString(),textAlign: TextAlign.center,textScaler: TextScaler.linear(5)),
           ),
         //)
@@ -136,9 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme
             .of(context)
             .colorScheme
@@ -176,14 +173,35 @@ class _MyHomePageState extends State<MyHomePage> {
                   .headlineMedium,
             ),
             Spacer(flex: 1),
-            Container(
-              width: 100,
-              height: 100,
-              color: discardStack.lastCard().color,
-            child: Text(discardStack.lastCard().number.toString(), textAlign: TextAlign.center, textScaler: TextScaler.linear(5),),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  child: Container(
+                      margin: EdgeInsets.all(8),
+                      width: CARD_WIDTH,
+                      height: CARD_HEIGHT,
+                      color: Colors.black,
+                  ),
+                  onTap: (){
+                    setState(() {
+                        drawStack.draw(hand01);
+                    });
+                  },
+                ),
+                Container(
+                  margin: EdgeInsets.all(8),
+                  width: CARD_WIDTH,
+                  height: CARD_HEIGHT,
+                  color: discardStack.lastCard().color,
+                  child: Text(discardStack.lastCard().number.toString(), textAlign: TextAlign.center, textScaler: TextScaler.linear(5),),
+              ),
+              ],
             ),
+
             Spacer(flex: 1),
             SizedBox(
+              width: double.infinity,
               height: 200,
                 child: ListView.builder(
                      padding: const EdgeInsets.all(20),
