@@ -2,6 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'package:test_test/class1.dart';
+
+
+
 void main() {
   runApp(const MyApp());
 }
@@ -57,7 +61,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
+  HandStack hand01 = new HandStack();
+  DiscardStack discardStack = new DiscardStack();
+  DrawStack drawStack = new DrawStack();
 
   void _incrementCounter() {
     setState(() {
@@ -67,23 +73,22 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
-      int limit = _counter;
+
 
     });
   }
 
-  List<GestureDetector> _handObjekteGenerieren(List<Zahlkarte> Hand)
+  List<GestureDetector> _UI_HandGenerieren(List<Card_Neu> Hand)
   {
-    List <GestureDetector> Obj = List<GestureDetector>.empty(growable: true);
+    List <GestureDetector> UI_Elemente = List<GestureDetector>.empty(growable: true);
     double offset = 0;
-    Hand.forEach((teil)
+    Hand.forEach((Data_Karte)
     {
-      Text Neu = Text(teil._Wert,textAlign: TextAlign.center,textScaler: TextScaler.linear(5));
       /*ClipRect Rect = ClipRect(
-        child:*/ GestureDetector Rect = GestureDetector(
+        child:*/ GestureDetector UI_Karte = GestureDetector(
           onTap: (){
             setState(() {
-              _counter++;
+              Data_Karte.aktion(discardStack, hand01);
             }
             );
           },
@@ -97,21 +102,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 2,
                 color: Colors.black,
               ),
-              color:  Colors.blue,
+              color:  Data_Karte.color,
             ),
             width: 100,
             height: 100,
-            child: Neu,
+            child: Text(Data_Karte.number.toString(),textAlign: TextAlign.center,textScaler: TextScaler.linear(5)),
           ),
         //)
       );
-      Obj.add(Rect);
+    UI_Elemente.add(UI_Karte);
     });
-
-    return Obj;
+    return UI_Elemente;
   }
 
-  List <Zahlkarte> _handGenerieren(int count)
+ /* List <Zahlkarte> _handGenerieren(int count)
   {
     List<Zahlkarte> list = List<Zahlkarte>.empty(growable: true);
     for (int i = 0; i < count; i++)
@@ -119,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
         list.add(Zahlkarte('Farbe', '$i'));
       }
     return list;
-  }
+  }*/
 
 
   @override
@@ -175,18 +179,19 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               width: 100,
               height: 100,
-              color: Colors.yellow,
-            child: Text("1", textAlign: TextAlign.center, textScaler: TextScaler.linear(5),),
+              color: discardStack.lastCard().color,
+            child: Text(discardStack.lastCard().number.toString(), textAlign: TextAlign.center, textScaler: TextScaler.linear(5),),
             ),
             Spacer(flex: 1),
-            Flexible(
+            SizedBox(
+              height: 200,
                 child: ListView.builder(
                      padding: const EdgeInsets.all(20),
                       scrollDirection: Axis.horizontal,
-                      itemCount: _handObjekteGenerieren(_handGenerieren(_counter)).length,
+                      itemCount: _UI_HandGenerieren(hand01.seeHand()).length,
                       itemBuilder: (BuildContext context, int index)
                       {
-                       return (_handObjekteGenerieren(_handGenerieren(_counter)))[index];
+                       return (_UI_HandGenerieren(hand01.seeHand()))[index];
                       },
                )
             ),
@@ -206,7 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  List<Karte> Hand = List<Karte>.empty(growable: true);
+  /*List<Karte> Hand = List<Karte>.empty(growable: true);
 
   List<Widget> Karten(limit) {
     List<Widget> list = List.empty(growable: true);
@@ -217,10 +222,10 @@ class _MyHomePageState extends State<MyHomePage> {
     Hand.add(Karte("www",'9'));
     return list;
     list; // all widget added now retrun the list here
-  }
+  }*/
 }
 
-
+/*
 class Karte
 {
   Karte(this._Farbe, this._Wert);
@@ -236,5 +241,4 @@ class Karte
 class Zahlkarte extends Karte
 {
   Zahlkarte(super.Farbe, super.Wert);
-
-}
+}*/
