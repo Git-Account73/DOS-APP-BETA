@@ -97,13 +97,13 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           child: Container(
             margin: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-                border: Border.all (
-                  width: 2,
-                  color: Colors.black,
-                ),
-                color:  Data_Karte.color,
+            border: Border.all (
+                width: 2,
+                color: Colors.black,
               ),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              color:  Data_Karte.color,
+            ),
             width: CARD_WIDTH,
             height: CARD_HEIGHT,
             child: Text(Data_Karte.number.toString(),textAlign: TextAlign.center,textScaler: TextScaler.linear(5)),
@@ -193,7 +193,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   margin: EdgeInsets.all(8),
                   width: CARD_WIDTH,
                   height: CARD_HEIGHT,
-                  color: discardStack.lastCard().color,
+                  decoration: BoxDecoration(
+                    border: Border.all (
+                        width: 2,
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      color:  discardStack.lastCard().color,
+                    ),
                   child: Text(discardStack.lastCard().number.toString(), textAlign: TextAlign.center, textScaler: TextScaler.linear(5),),
               ),
               ],
