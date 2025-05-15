@@ -43,16 +43,16 @@ class DrawStack extends CardsStack {
     cards.shuffle();
   }
 
-  Card_Neu? draw() {
+  void draw(CardsStack CS) {
     if (cards.isEmpty){
-      return null;
+      return;
     }
     int count = Random().nextInt(cards.length - 1);
     Card_Neu drawnCard = cards[count];
 
     cards.remove(drawnCard);
 
-    return drawnCard;
+    CS.cards.add(drawnCard);
   }
 
   void shAdd(CardsStack discard) {
@@ -62,10 +62,7 @@ class DrawStack extends CardsStack {
 
 class DiscardStack extends CardsStack{
   DiscardStack(DrawStack dr){
-    Card_Neu? first = dr.draw();
-    if(first != null) {
-      cards.add(first);
-    }
+    dr.draw(this);
   }
   void play (Card_Neu card){
     cards.add(card);
