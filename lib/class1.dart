@@ -11,16 +11,15 @@ class Card_Neu {
     number = n;
   }
 
-  bool action(DiscardStack dis, HandStack hand){
+  void action(DrawStack ds,DiscardStack dis, HandStack hand){
     if(dis.lastCard().color != color){
       if(dis.lastCard().number != number){
-        return false;
+        return;
       }
     }
 
     hand.cardIsPlayed(this);
     dis.play(this);
-    return true;
   }
 }
 
@@ -34,29 +33,33 @@ class DrawStack extends CardsStack {
     int num = 1;
     int j = 0;
     for(int i = 0; i < 36; i++){
-      if(num > 8){
+      if(num > 9){
         num = 1;
         j++;
       }
       cards.add(Card_Neu(col[j], num));
+      cards.add(Card_Neu(col[j], num));
+      num++;
     }
     cards.shuffle();
   }
 
-  void draw(CardsStack CS) {
+  bool draw(CardsStack cs) {
     if (cards.isEmpty){
-      return;
+      return true;
     }
     int count = Random().nextInt(cards.length - 1);
     Card_Neu drawnCard = cards[count];
 
     cards.remove(drawnCard);
 
-    CS.cards.add(drawnCard);
+    cs.cards.add(drawnCard);
+    return false;
   }
 
   void shAdd(CardsStack discard) {
     cards.addAll(discard.cards);
+
   }
 }
 
@@ -76,6 +79,9 @@ class DiscardStack extends CardsStack{
 class HandStack extends CardsStack{
   void cardIsPlayed(Card_Neu card){
     cards.remove(card);
+    if(cards.isEmpty){
+      //TODO: YOU WIN!
+    }
   }
 
   List<Card_Neu> seeHand(){
