@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -58,6 +58,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -66,8 +67,60 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      int limit = _counter;
+
     });
   }
+
+  List<GestureDetector> _handObjekteGenerieren(List<Zahlkarte> Hand)
+  {
+    List <GestureDetector> Obj = List<GestureDetector>.empty(growable: true);
+    double offset = 0;
+    Hand.forEach((teil)
+    {
+      Text Neu = Text(teil._Wert,textAlign: TextAlign.center,textScaler: TextScaler.linear(5));
+      /*ClipRect Rect = ClipRect(
+        child:*/ GestureDetector Rect = GestureDetector(
+          onTap: (){
+            setState(() {
+              _counter++;
+            }
+            );
+          },
+          child: Container(
+            constraints: BoxConstraints.loose(
+                Size(100, 100)
+            ),
+            margin: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              border: Border.all (
+                width: 2,
+                color: Colors.black,
+              ),
+              color:  Colors.blue,
+            ),
+            width: 100,
+            height: 100,
+            child: Neu,
+          ),
+        //)
+      );
+      Obj.add(Rect);
+    });
+
+    return Obj;
+  }
+
+  List <Zahlkarte> _handGenerieren(int count)
+  {
+    List<Zahlkarte> list = List<Zahlkarte>.empty(growable: true);
+    for (int i = 0; i < count; i++)
+      {
+        list.add(Zahlkarte('Farbe', '$i'));
+      }
+    return list;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +135,10 @@ class _MyHomePageState extends State<MyHomePage> {
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
@@ -105,12 +161,40 @@ class _MyHomePageState extends State<MyHomePage> {
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headlineMedium,
             ),
+            Spacer(flex: 1),
+            Container(
+              width: 100,
+              height: 100,
+              color: Colors.yellow,
+            child: Text("1", textAlign: TextAlign.center, textScaler: TextScaler.linear(5),),
+            ),
+            Spacer(flex: 1),
+            Flexible(
+                child: ListView.builder(
+                     padding: const EdgeInsets.all(20),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _handObjekteGenerieren(_handGenerieren(_counter)).length,
+                      itemBuilder: (BuildContext context, int index)
+                      {
+                       return (_handObjekteGenerieren(_handGenerieren(_counter)))[index];
+                      },
+               )
+            ),
+            /*Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children:  _handObjekteGenerieren(_handGenerieren(_counter))
+              ),*/
           ],
         ),
       ),
@@ -118,7 +202,39 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ), // This trailing comma makes auto-formatting nicer for build methods
     );
   }
+
+  List<Karte> Hand = List<Karte>.empty(growable: true);
+
+  List<Widget> Karten(limit) {
+    List<Widget> list = List.empty(growable: true);
+    //i<5, pass your dynamic limit as per your requirment
+    Hand.forEach((Instanz) {
+    list.add(Text("$Instanz.GetFarbe() $limit"));//add any Widget in place of Text("Index $i")
+    });
+    Hand.add(Karte("www",'9'));
+    return list;
+    list; // all widget added now retrun the list here
+  }
+}
+
+
+class Karte
+{
+  Karte(this._Farbe, this._Wert);
+
+  final String _Farbe;
+  final String _Wert;
+
+  String get Farbe => _Farbe; //Getter
+
+  String get Wert => _Wert; //Getter
+}
+
+class Zahlkarte extends Karte
+{
+  Zahlkarte(super.Farbe, super.Wert);
+
 }
