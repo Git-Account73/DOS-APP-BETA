@@ -1,6 +1,6 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:test_test/main.dart';
 
 class Card_Neu {
   Color? color;
@@ -11,14 +11,14 @@ class Card_Neu {
     number = n;
   }
 
-  void action(DrawStack ds,DiscardStack dis, HandStack hand){
+  void action(DrawStack ds,DiscardStack dis, HandStack hand, BuildContext context){
     if(dis.lastCard().color != color){
       if(dis.lastCard().number != number){
         return;
       }
     }
 
-    hand.cardIsPlayed(this);
+    hand.cardIsPlayed(this, context);
     dis.play(this);
   }
 }
@@ -76,11 +76,16 @@ class DiscardStack extends CardsStack{
   }
 }
 
+
 class HandStack extends CardsStack{
-  void cardIsPlayed(Card_Neu card){
+  @override
+  void cardIsPlayed(Card_Neu card, BuildContext context){
     cards.remove(card);
     if(cards.isEmpty){
-      //TODO: YOU WIN!
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => EndScreen(title: "Gewonnen",))
+      );
     }
   }
 
