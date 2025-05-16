@@ -7,7 +7,6 @@ import 'package:test_test/class1.dart';
 import 'package:test_test/constants.dart';
 
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -38,13 +37,13 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const HomeScreen(title: 'Flutter Projekt'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class GamePage extends StatefulWidget {
+  const GamePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -58,10 +57,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<GamePage> createState() => _GamePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _GamePageState extends State<GamePage> {
   int _counter = 0;
   HandStack hand01 = new HandStack();
   static DrawStack drawStack = new DrawStack();
@@ -76,34 +75,31 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
-
-
     });
   }
 
   List<GestureDetector> _UI_HandGenerieren(List<Card_Neu> Hand)
   {
     List <GestureDetector> UI_Elemente = List<GestureDetector>.empty(growable: true);
-    double offset = 0;
     Hand.forEach((Data_Karte)
     {
       /*ClipRect Rect = ClipRect(
         child:*/ GestureDetector UI_Karte = GestureDetector(
           onTap: (){
             setState(() {
-              Data_Karte.action(discardStack, hand01);
+              Data_Karte.action(drawStack,discardStack, hand01, context);
             }
             );
           },
           child: Container(
             margin: const EdgeInsets.all(5),
-            border: Border.all (
-                width: 2,
-                color: Colors.black,
+            decoration: BoxDecoration(
+                border: Border.all (
+                  width: 2,
+                  color: Colors.black,
+                ),
+                color:  Data_Karte.color,
               ),
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              color:  Data_Karte.color,
-            ),
             width: CARD_WIDTH,
             height: CARD_HEIGHT,
             child: Text(Data_Karte.number.toString(),textAlign: TextAlign.center,textScaler: TextScaler.linear(5)),
@@ -114,17 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     return UI_Elemente;
   }
-
- /* List <Zahlkarte> _handGenerieren(int count)
-  {
-    List<Zahlkarte> list = List<Zahlkarte>.empty(growable: true);
-    for (int i = 0; i < count; i++)
-      {
-        list.add(Zahlkarte('Farbe', '$i'));
-      }
-    return list;
-  }*/
-
 
   @override
   Widget build(BuildContext context) {
@@ -193,14 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   margin: EdgeInsets.all(8),
                   width: CARD_WIDTH,
                   height: CARD_HEIGHT,
-                  decoration: BoxDecoration(
-                    border: Border.all (
-                        width: 2,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      color:  discardStack.lastCard().color,
-                    ),
+                  color: discardStack.lastCard().color,
                   child: Text(discardStack.lastCard().number.toString(), textAlign: TextAlign.center, textScaler: TextScaler.linear(5),),
               ),
               ],
@@ -250,20 +228,66 @@ class _MyHomePageState extends State<MyHomePage> {
   }*/
 }
 
-/*
-class Karte
+class HomeScreen extends StatefulWidget
 {
-  Karte(this._Farbe, this._Wert);
+  const HomeScreen({super.key, required this.title});
+  final String title;
 
-  final String _Farbe;
-  final String _Wert;
-
-  String get Farbe => _Farbe; //Getter
-
-  String get Wert => _Wert; //Getter
+  @override
+  State<HomeScreen> createState() => HomescreenState();
 }
 
-class Zahlkarte extends Karte
+class HomescreenState extends State<HomeScreen>
 {
-  Zahlkarte(super.Farbe, super.Wert);
-}*/
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+            child: ElevatedButton(
+                onPressed: (){
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => GamePage(title: "Uno",))
+                   );
+               },
+                child: const Text('Spiel starten')
+            ),
+        )
+    );
+  }
+}
+
+class EndScreen extends StatefulWidget
+{
+  const EndScreen({super.key, required this.title});
+  final String title;
+
+  @override
+  State<EndScreen> createState() => EndScreenState();
+}
+
+class EndScreenState extends State<EndScreen>
+{
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("GEWONNEN",textScaler: TextScaler.linear(10),),
+              ElevatedButton(
+                onPressed: (){
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen(title: "Flutter Projekt",))
+                  );
+                },
+                child:  Text('Noch mal?')
+              )
+            ],
+          ),
+        )
+    );
+  }
+}
