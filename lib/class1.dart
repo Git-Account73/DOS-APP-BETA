@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:test_test/main.dart';
+import 'dos.dart';
 
 class Card_Neu {
   Color? color;
@@ -86,6 +86,8 @@ class HandStack extends CardsStack{
           context,
           MaterialPageRoute(builder: (context) => EndScreen(title: "Gewonnen",))
       );
+      //Evtl. hier einfach push auf neuen Screen
+      //HomescreenState.Test();
     }
   }
 
