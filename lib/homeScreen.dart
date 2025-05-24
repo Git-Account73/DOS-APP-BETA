@@ -14,11 +14,13 @@ class HomeScreen extends StatefulWidget
 class HomescreenState extends State<HomeScreen>
 {
   bool _textfieldempty = false;
-  final _textControler = TextEditingController(text: '7',);
+  final _textKartenControler = TextEditingController(text: '7',);
+  final _textKIsControler = TextEditingController(text: '1',);
 
   @override
   void dispose() {
-    _textControler.dispose();
+    _textKartenControler.dispose();
+    _textKIsControler.dispose();
     super.dispose();
   }
 
@@ -29,27 +31,53 @@ class HomescreenState extends State<HomeScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                    width: 150,
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.numberWithOptions(signed: false, decimal: false),
-                      maxLength: 2,
-                      decoration: InputDecoration(border: OutlineInputBorder(), labelText: 'Anzahl Startkarten'),
-                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
-                      controller: _textControler,
-                      onChanged: (String input){
-                        if (_textControler.text == '')
-                        {
-                          _textfieldempty = true;
-
-                        }
-                        else
-                        {
-                          _textfieldempty = false;
-                        }
-                      },
-                    )
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        width: 150,
+                        child: TextField(
+                          enabled: false,
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.numberWithOptions(signed: false, decimal: false),
+                          maxLength: 1,
+                          decoration: InputDecoration(border: OutlineInputBorder(), labelText: 'Anzahl KIs'),
+                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
+                          controller: _textKIsControler,
+                          onChanged: (String input){
+                            if (_textKIsControler.text == '' || _textKartenControler.text == '')
+                            {
+                              _textfieldempty = true;
+                            }
+                            else
+                            {
+                              _textfieldempty = false;
+                            }
+                          },
+                        )
+                    ),
+                    SizedBox(
+                        width: 150,
+                        child: TextField(
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.numberWithOptions(signed: false, decimal: false),
+                          maxLength: 2,
+                          decoration: InputDecoration(border: OutlineInputBorder(), labelText: 'Anzahl Startkarten'),
+                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
+                          controller: _textKartenControler,
+                          onChanged: (String input){
+                            if (_textKIsControler.text == '' || _textKartenControler.text == '')
+                            {
+                              _textfieldempty = true;
+                            }
+                            else
+                            {
+                              _textfieldempty = false;
+                            }
+                          },
+                        )
+                    ),
+                  ],
                 ),
                 ElevatedButton(
                     onPressed: (){
@@ -57,7 +85,7 @@ class HomescreenState extends State<HomeScreen>
                       {
                         Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => GamePage(title: "TTTTTTTTTTTTTT",))
+                            MaterialPageRoute(builder: (context) => GamePage(title: "DOS", maxSpieler: int.parse(_textKIsControler.text)))
                         );
                       }
                       else
