@@ -11,15 +11,16 @@ class Card_Neu {
     number = n;
   }
 
-  void action(DrawStack ds,DiscardStack dis, HandStack hand, BuildContext context){
+  bool action(DrawStack ds,DiscardStack dis, HandStack hand, BuildContext context, int currentPlayer){
     if(dis.lastCard().color != color){
       if(dis.lastCard().number != number){
-        return;
+        return false;
       }
     }
 
-    hand.cardIsPlayed(this, context);
+    hand.cardIsPlayed(this, context, currentPlayer);
     dis.play(this);
+    return true;
   }
 }
 
@@ -79,19 +80,22 @@ class DiscardStack extends CardsStack{
 
 class HandStack extends CardsStack{
   @override
-  void cardIsPlayed(Card_Neu card, BuildContext context){
+  void cardIsPlayed(Card_Neu card, BuildContext context, int currentPlayer){
     cards.remove(card);
     if(cards.isEmpty){
       Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EndScreen(title: "Gewonnen",))
+          MaterialPageRoute(builder: (context) => EndScreen(ausgang: currentPlayer == 1 ? "Gewonnen" : "Verloren",))
       );
-      //Evtl. hier einfach push auf neuen Screen
-      //HomescreenState.Test();
     }
   }
 
   List<Card_Neu> seeHand(){
     return cards;
+  }
+
+  int amountCards()
+  {
+    return cards.length;
   }
 }
