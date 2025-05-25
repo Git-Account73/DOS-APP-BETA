@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget
 class HomescreenState extends State<HomeScreen>
 {
   bool _textfieldempty = false;
-  final _textKartenControler = TextEditingController(text: '7',);
+  final _textKartenControler = TextEditingController(text: '0',);
   final _textKIsControler = TextEditingController(text: '1',);
 
   @override
@@ -59,6 +59,7 @@ class HomescreenState extends State<HomeScreen>
                     SizedBox(
                         width: 150,
                         child: TextField(
+                          enabled: false,
                           textAlign: TextAlign.center,
                           keyboardType: TextInputType.numberWithOptions(signed: false, decimal: false),
                           maxLength: 2,
