@@ -4,26 +4,35 @@ import 'constants.dart';
 import 'homeScreen.dart';
 
 class GamePage extends StatefulWidget {
-  const GamePage({super.key, required this.title, required int maxSpieler})
-    : maxPlayer = maxSpieler;
+  const GamePage({super.key, required this.title, required int maxSpieler, required int startkarten})
+    : maxPlayer = maxSpieler, startingCards = startkarten;
 
   //Hier zusätzliches Argument: Anzahl Startkarten
 
   final String title;
   final int maxPlayer;
+  final int startingCards;
 
   @override
-  State<GamePage> createState() => GamePageState(maxSpieler: maxPlayer);
+  State<GamePage> createState() => GamePageState(maxSpieler: maxPlayer, starkarten: startingCards);
 }
 
 class GamePageState extends State<GamePage> {
-  GamePageState({required int maxSpieler}) : maxPlayers = maxSpieler + 1;
+  GamePageState({required int maxSpieler, required int starkarten})
+      : _startingCards = starkarten,
+        maxPlayers = maxSpieler + 1 {
+    _hand01 = HandStack(_drawStack, _startingCards);
+    _hand02 = HandStack(_drawStack, _startingCards);
+    _discardStack = DiscardStack(_drawStack);
+  }
+
   int currentPlayer = 1;
+  final int _startingCards;
   final int maxPlayers;
-  final HandStack _hand01 = HandStack();
-  final HandStack _hand02 = HandStack();
-  static final DrawStack _drawStack = DrawStack();
-  final DiscardStack _discardStack = DiscardStack(_drawStack);
+  final DrawStack _drawStack = DrawStack();
+  late final HandStack _hand01;
+  late final HandStack _hand02;
+  late final DiscardStack _discardStack;
 
   void next(BuildContext context) {
     if (currentPlayer == 1) {
@@ -106,78 +115,84 @@ class GamePageState extends State<GamePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(color: Colors.black38),
-                  width: CARD_WIDTH / 2,
-                  height: CARD_HEIGHT / 2,
-                  child: Text(
-                    _hand02.amountCards().toString(),
-                    textAlign: TextAlign.center,
-                    textScaler: TextScaler.linear(5 / 2),
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(image: AssetImage("images/Tisch.png"), fit: BoxFit.cover)
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(color: Colors.white),
+                    width: CARD_WIDTH / 2,
+                    height: CARD_HEIGHT / 2,
+                    child: Text(
+                      _hand02.amountCards().toString(),
+                      textAlign: TextAlign.center,
+                      textScaler: TextScaler.linear(5 / 2),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Spacer(flex: 1),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  child: Container(
+                ],
+              ),
+              Spacer(flex: 1),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    child: Container(
+                      margin: EdgeInsets.all(8),
+                      width: CARD_WIDTH,
+                      height: CARD_HEIGHT,
+                      color: Colors.black,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        if (currentPlayer == 1) {
+                          _drawStack.draw(_hand01);
+                        }
+                      });
+                      next(context);
+                    },
+                  ),
+                  Container(
                     margin: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 2, color: Colors.black),
+                      color: _discardStack.lastCard().color,
+                    ),
                     width: CARD_WIDTH,
                     height: CARD_HEIGHT,
-                    color: Colors.black,
+                    child: Text(
+                      _discardStack.lastCard().number.toString(),
+                      textAlign: TextAlign.center,
+                      textScaler: TextScaler.linear(5),
+                    ),
                   ),
-                  onTap: () {
-                    setState(() {
-                      if (currentPlayer == 1) {
-                        _drawStack.draw(_hand01);
-                      }
-                    });
-                    next(context);
+                ],
+              ),
+
+              Spacer(flex: 1),
+              SizedBox(
+                width: double.infinity,
+                height: 200,
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(20),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _UI_HandGenerieren(_hand01.seeHand()).length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return (_UI_HandGenerieren(_hand01.seeHand()))[index];
                   },
                 ),
-                Container(
-                  margin: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 2, color: Colors.black),
-                    color: _discardStack.lastCard().color,
-                  ),
-                  width: CARD_WIDTH,
-                  height: CARD_HEIGHT,
-                  child: Text(
-                    _discardStack.lastCard().number.toString(),
-                    textAlign: TextAlign.center,
-                    textScaler: TextScaler.linear(5),
-                  ),
-                ),
-              ],
-            ),
-
-            Spacer(flex: 1),
-            SizedBox(
-              width: double.infinity,
-              height: 200,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(20),
-                scrollDirection: Axis.horizontal,
-                itemCount: _UI_HandGenerieren(_hand01.seeHand()).length,
-                itemBuilder: (BuildContext context, int index) {
-                  return (_UI_HandGenerieren(_hand01.seeHand()))[index];
-                },
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+
+        )
       ),
     );
   }
@@ -200,7 +215,7 @@ class EndScreenState extends State<EndScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(widget.ausgang, textScaler: TextScaler.linear(10)),
+            Text(widget.ausgang, textScaler: TextScaler.linear(5)),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacement(
