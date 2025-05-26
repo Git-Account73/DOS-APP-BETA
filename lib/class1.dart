@@ -79,6 +79,12 @@ class DiscardStack extends CardsStack{
 
 
 class HandStack extends CardsStack{
+  HandStack(DrawStack dr,int anz){
+    for(int x = 0; x <= anz; x++){
+      dr.draw(this);
+    }
+  }
+
   @override
   void cardIsPlayed(Card_Neu card, BuildContext context, int currentPlayer){
     cards.remove(card);
